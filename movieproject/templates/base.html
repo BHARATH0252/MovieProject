@@ -19,7 +19,7 @@
             <span class="text-white">Welcome, {{ user.username }}</span>
             <a href="{% url 'movieapp:user_logout' %}" class="btn btn-info ml-2">Logout</a>
         {% else %}
-            <a href="{% url 'movieapp:user_login' %}" class="btn btn-info">Login</a>
+            <a href="{% url 'movieapp:user_login' %}?next={{ request.path }}" class="btn btn-info">Login</a>
             <a href="{% url 'movieapp:user_register' %}" class="btn btn-info">Signup</a>
          {% endif %}
     </div>

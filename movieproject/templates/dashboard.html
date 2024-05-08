@@ -1,18 +1,45 @@
-{% extends 'base.html' %}
-
-{% block body %}
-<div class="container">
-    <h2>Dashboard</h2>
-    <p>Welcome, {{ username }}</p>
-    <button type="submit" class="btn btn-primary">Add Movie</button>
-    <hr>
-
-    <h3>Current Movies</h3>
-    <ul>
-        {% for movie in movies %}
-            <li>{{ movie.name }}</li>
-            <!-- Display other movie details as needed -->
-        {% endfor %}
-    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <h4>Options</h4>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movieapp:add_movie' %}">Add Movie</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'movieapp:view_profile' %}">View Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Dashboard -->
+        <div class="col-md-9">
+            <div class="dashboard">
+                <h2>Dashboard</h2>
+                <p>Welcome, {{ username }}</p>
+                <hr>
+                <h3>Your Movies</h3>
+                <ul>
+                    {% for movie in movies %}
+                        <li>{{ movie.title }}  <a href="{% url 'movieapp:movie_detail' movie.id %}" class="btn btn-primary">Go</a></li>
+                        <li>{{ movie.poster }}</li>
+                    {% empty %}
+                        <li>No movies found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
+<style>
+    .sidebar {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-right: 1px solid #dee2e6;
+    }
+    .dashboard {
+        padding: 20px;
+    }
+</style>

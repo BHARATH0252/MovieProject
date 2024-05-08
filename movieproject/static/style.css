@@ -1,0 +1,9 @@
+body{
+    background-color: aqua;
+}
+.reviews-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
