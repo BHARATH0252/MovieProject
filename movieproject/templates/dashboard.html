@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+    <h2>Dashboard</h2>
+    <p>Welcome, {{ username }}</p>
+    <button type="submit" class="btn btn-primary">Add Movie</button>
+    <hr>
+
+    <h3>Current Movies</h3>
+    <ul>
+        {% for movie in movies %}
+            <li>{{ movie.name }}</li>
+            <!-- Display other movie details as needed -->
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

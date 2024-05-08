@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.title }}</title>
+</head>
+<body>
+    <h1>{{ movie.title }}</h1>
+    <img src="{{ movie.poster.url }}" alt="{{ movie.title }} Poster">
+    <p>Description: {{ movie.description }}</p>
+    <p>Release Date: {{ movie.release_date }}</p>
+    <p>Actors: {{ movie.actors }}</p>
+    <p>Category: {{ movie.category }}</p>
+    <iframe width="560" height="315" src="{{ movie.trailer_link }}" frameborder="0" allowfullscreen></iframe>
+    <h2>Reviews</h2>
+    <ul>
+        {% for review in reviews %}
+            <li>{{ review.text }} - {{ review.user.username }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_review' movie.id %}">Add Review</a>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{%  extends 'base.html' %}
+{% block body %}
+<style>
+  .card-container {
+    margin: 10px;
+    min-height: 350px;
+     display: flex;
+    flex-direction: column;
+  }
+  .card-body {
+    flex-grow: 1;
+  }
+</style>
+<div class="container">
+    <div class="row">
+        {% for i in movie_list %}
+        <div class="col-md-3 card-container">
+            <div class="card h-100" style="width: 18rem;">
+                <img src="{{ i.img.url }}" class="card-img-top" alt="..." height="200px" >
+                <div class="card-body">
+                    <h5 class="card-title">{{ i.name}}</h5>
+                    <h6 style="font-size: 80%"><p class="card-text">{{ i.desc }}</p></h6>
+                </div>
+                <div class="card-footer align-self-end">
+                    <a href="{% url 'movieapp:movie_detail' i.id %}" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
