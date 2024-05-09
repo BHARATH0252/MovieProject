@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Movie, Review
-from movieapp.forms import MovieForm, ReviewForm
+from .models import Movie, Review , Category
+from movieapp.forms import MovieForm, ReviewForm,SearchForm
 from .forms import UserRegistrationForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
@@ -13,9 +13,20 @@ from django.contrib.auth import login, logout
 #     return render(request, 'movies/movie_list.html', {'movies': movies})
 
 def index(request):
-    movie_list = Movie.objects.all()
-    # Pass the movie_list to the template for rendering
-    return render(request, 'index.html', {'movie_list': movie_list})
+    categories_with_movies = Category.objects.order_by('name').values('id', 'name')
+
+    # Create a dictionary to map category IDs to category names
+    category_id_to_name = {category['id']: category['name'] for category in categories_with_movies}
+
+    # Now populate movies_by_category using category names
+    movies_by_category = {}
+    for category_id, category_name in category_id_to_name.items():
+        movies = Movie.objects.filter(category=category_id)
+        movies_by_category[category_name] = movies
+
+    print("Movies by category:", movies_by_category)  # Debugging statement
+
+    return render(request, 'index.html', {'movies_by_category': movies_by_category})
 
 
 def movie_detail(request, movie_id):
@@ -25,10 +36,12 @@ def movie_detail(request, movie_id):
 
 
 def movie_list_view(request):
-    # Retrieve a list of movie objects from the database
-    movie_list = Movie.objects.all()
-    # Pass the movie_list to the template for rendering
-    return render(request, 'index.html', {'movie_list': movie_list})
+    genres = Movie.objects.values_list('genre', flat=True).distinct()
+    movies_by_genre = {}
+    for genre in genres:
+        movies = Movie.objects.filter(genre=genre)
+        movies_by_genre[genre] = movies
+    return render(request, 'index.html', {'movies_by_genre': movies_by_genre})
 
 
 @login_required
@@ -120,3 +133,30 @@ def dashboard(request, username):
 def view_profile(request):
     # Logic to fetch and display user profile information
     return render(request, 'profile.html')
+
+def movie_search(request):
+    if request.method == 'GET':
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data.get('query')
+            category = form.cleaned_data.get('category')
+            movies = Movie.objects.all()
+            if query:
+                movies = movies.filter(title__icontains=query)
+            if category:
+                movies = movies.filter(category=category)
+            return render(request, 'search_results.html', {'movies': movies})
+    else:
+        form = SearchForm()
+    return render(request, 'search_results.html', {'form': form})
+
+def edit_movie(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    if request.method == 'POST':
+        form = MovieForm(request.POST, request.FILES, instance=movie)
+        if form.is_valid():
+            form.save()
+            return redirect('movieapp:view_profile')
+    else:
+        form = MovieForm(instance=movie)
+    return render(request, 'movies/edit_movie.html', {'form': form})

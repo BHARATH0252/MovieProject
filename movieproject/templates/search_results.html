@@ -1,0 +1,31 @@
+{%  extends 'base.html' %}
+{% block body %}
+
+{% if movies %}
+    <div class="row">
+        {% for movie in movies %}
+            <div class="col-md-3 card-container">
+                <div class="card h-100" style="width: 18rem;">
+                    <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.name }}" height="200px" width="150px">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <h6>{{ movie.category }}</h6>
+                        <h6 style="font-size: 80%"><p class="card-text">{{ movie.description }}</p></h6>
+                    </div>
+                    <div class="card-footer align-self-end">
+                        <a href="{% url 'movieapp:movie_detail' movie.id %}" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+ <div class="mt-3">
+        <a href="{% url 'movieapp:index' %}" class="btn btn-secondary mr-2">Back to Home</a>
+        <a href="{% url 'movieapp:movie_search' %}" class="btn btn-primary">Search Again</a>
+    </div>
+{% else %}
+    <p>No movies found.</p>
+    <a href="{% url 'movieapp:index' %}" class="btn btn-secondary">Back to Home</a>
+{% endif %}
+
+{% endblock %}
