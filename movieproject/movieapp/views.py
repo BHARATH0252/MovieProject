@@ -1,16 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Movie, Review , Category
-from movieapp.forms import MovieForm, ReviewForm,SearchForm
-from .forms import UserRegistrationForm
+from .models import Movie, Review, Category, Profile ,User
+from movieapp.forms import MovieForm, ReviewForm, SearchForm
+from .forms import UserRegistrationForm, UserForm  ,UserUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
-
-
-# def movie_list(request):
-#     movies = Movie.objects.all()
-#     return render(request, 'movies/movie_list.html', {'movies': movies})
+from django.contrib.auth import login, logout,update_session_auth_hash
+from django.urls import reverse
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 def index(request):
     categories_with_movies = Category.objects.order_by('name').values('id', 'name')
@@ -24,7 +22,7 @@ def index(request):
         movies = Movie.objects.filter(category=category_id)
         movies_by_category[category_name] = movies
 
-    print("Movies by category:", movies_by_category)  # Debugging statement
+    #print("Movies by category:", movies_by_category)  # Debugging statement
 
     return render(request, 'index.html', {'movies_by_category': movies_by_category})
 
@@ -53,7 +51,7 @@ def add_movie(request):
             movie.added_by = request.user
             movie.save()
             messages.success(request, 'Movie added successfully!')
-            return redirect('movie_list')
+            return redirect('movieapp:dashboard', username=request.user.username)
     else:
         form = MovieForm()
     return render(request, 'movies/add_movie.html', {'form': form})
@@ -134,6 +132,7 @@ def view_profile(request):
     # Logic to fetch and display user profile information
     return render(request, 'profile.html')
 
+
 def movie_search(request):
     if request.method == 'GET':
         form = SearchForm(request.GET)
@@ -150,6 +149,7 @@ def movie_search(request):
         form = SearchForm()
     return render(request, 'search_results.html', {'form': form})
 
+
 def edit_movie(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     if request.method == 'POST':
@@ -160,3 +160,55 @@ def edit_movie(request, movie_id):
     else:
         form = MovieForm(instance=movie)
     return render(request, 'movies/edit_movie.html', {'form': form})
+
+
+def viewprofile(request, username):
+    # Retrieve the user object
+    user = get_object_or_404(User, username=username)
+
+    try:
+        # Attempt to retrieve the profile associated with the user
+        profile = Profile.objects.get(user=user)
+    except Profile.DoesNotExist:
+        # Handle case where the profile doesn't exist
+        profile = None
+
+    return render(request, 'profile.html', {'user': user, 'profile': profile})
+
+
+@login_required
+def update_profile(request):
+  if request.method == 'POST':
+    user_form = UserUpdateForm(request.POST, instance=request.user)
+    if user_form.is_valid():
+      user_form.save()
+
+      # Update session data after successful update (optional)
+      update_session_auth_hash(request.user, user_form.saved_object)
+
+      return redirect('edit_profile.html')  # Redirect to profile page after successful update
+    else:
+      # Handle form validation errors (optional)
+      pass
+  else:
+    user_form = UserUpdateForm(instance=request.user)
+
+  context = {'user_form': user_form}
+  return render(request, 'edit_profile.html', {'user_form': user_form})
+
+
+def delete_movie(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    if movie.added_by == request.user:
+        movie.delete()
+        messages.success(request, 'Movie deleted successfully.')
+    else:
+        # Add an error message if the user does not have permission
+        messages.error(request, 'You do not have permission to delete this movie.')
+    return redirect(reverse('movieapp:dashboard', kwargs={'username': request.user.username}))
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)

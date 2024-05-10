@@ -37,26 +37,26 @@
 <div class="container movie-listings">
     <div class="row">
         {% for category, movies in movies_by_category.items %}
-            <div class="col-md-12">
-                <h2>{{ category }}</h2>
+        {% if movies %}  <div class="col-md-12">
+            <h2>{{ category }}</h2>
                 <div class="row">
                     {% for movie in movies %}
-                        <div class="col-md-3 card-container">
+                        <div class="col-md-3 card-container" >
                             <div class="card h-100" style="width: 18rem;">
+                                 <a href="{% url 'movieapp:movie_detail' movie.id %}">
                                 <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.name }}" height="200px" width="150px">
+                                 </a>
                                 <div class="card-body">
                                     <h5 class="card-title">{{ movie.title }}</h5>
                                     <h6>{{ movie.category }}</h6>
                                     <h6 style="font-size: 80%"><p class="card-text">{{ movie.description }}</p></h6>
-                                </div>
-                                <div class="card-footer align-self-end">
-                                    <a href="{% url 'movieapp:movie_detail' movie.id %}" class="btn btn-primary">Go somewhere</a>
                                 </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             </div>
+            {% endif %}
         {% endfor %}
     </div>
 </div>

@@ -1,28 +1,34 @@
 {% extends 'base.html' %}
+
 {% block body %}
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3">
+        <div class="col-md-3 col-sm-12" style="margin-left:0px;"> <!-- Adjusted Bootstrap classes -->
             <div class="sidebar">
-                <h1>User Dashboard</h1>
-                <h3>Options</h3>
+                <h1>Dashboard</h1>
+
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'movieapp:add_movie' %}">Add Movie</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'movieapp:view_profile' %}">View Profile</a>
+                        <a class="nav-link" href="{% url 'movieapp:viewprofile' username %}">View Profile</a>
+
                     </li>
-                </ul>
+
             </div>
         </div>
         <!-- Dashboard -->
-        <div class="col-md-9">
+        <div class="col-md-9 col-sm-12"> <!-- Adjusted Bootstrap classes -->
             <div class="dashboard">
-
                 <p>Welcome, {{ username }}</p>
                 <hr>
+                <h2>Your Profile</h2>
+                <!-- Display user profile information here -->
+                <p>Username: {{ user.username }}</p>
+                <p>Email: {{ user.email }}</p>
+                <!-- Add more profile fields as needed -->
                 <h2>Your Movies</h2>
                 <ul>
                     {% for movie in movies %}
@@ -31,6 +37,7 @@
 
                             {% if movie.added_by == request.user %}
                                 <a href="{% url 'movieapp:edit_movie' movie.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                                <a href="{% url 'movieapp:delete_movie' movie.id %}" class="btn btn-danger btn-sm">Delete</a>
                             {% endif %}
                             </h4>
                         </li>
@@ -42,15 +49,84 @@
         </div>
     </div>
 </div>
+
 <style>
+    /* Sidebar styles */
     .sidebar {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-right: 1px solid #dee2e6;
+        background-color:  #f8f9fa; /* Darker background color */
+        padding: 10px; /* Decreased padding */
+        border-right: 1px solid #343a40; /* Darker border */
+        color: #000000; /* White text color */
+        height: 100vh; /* Set sidebar height to fill viewport */
+        overflow-y: auto; /* Allow scrolling if content exceeds viewport height */
+        width: 250px;
+        margin-left:-20px;
     }
+
+    /* Sidebar heading styles */
+    .sidebar h1, .sidebar h3 {
+        color: #000000; /* White heading text color */
+    }
+
+    /* Sidebar link styles */
+    .nav-link {
+        color: #ffffff; /* White link text color */
+    }
+
+    .nav-link:hover {
+        color: #cccccc; /* Light grey on hover */
+    }
+
+    /* Dashboard styles */
     .dashboard {
-        padding: 20px;
+        padding: 10px;
+    }
+
+    /* Movie title styles */
+    .movie-title {
+        margin-bottom: 20px;
+    }
+
+    .movie-title h4 {
+        margin-bottom: 5px;
+    }
+
+    .movie-title a {
+        margin-left: 10px;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        background-color: #6c757d; /* Change primary button color */
+        border-color: #6c757d; /* Change primary button border color */
+    }
+
+    .btn-primary:hover {
+        background-color: #5a6268; /* Darker primary color on hover */
+        border-color: #5a6268; /* Darker primary border color on hover */
+    }
+
+    .btn-secondary {
+        background-color: #dc3545; /* Change secondary button color */
+        border-color: #dc3545; /* Change secondary button border color */
+    }
+
+    .btn-secondary:hover {
+        background-color: #c82333; /* Darker secondary color on hover */
+        border-color: #c82333; /* Darker secondary border color on hover */
+    }
+
+    .btn-danger {
+        background-color: #007bff; /* Change danger button color */
+        border-color: #007bff; /* Change danger button border color */
+    }
+
+    .btn-danger:hover {
+        background-color: #0056b3; /* Darker danger color on hover */
+        border-color: #0056b3; /* Darker danger border color on hover */
     }
 </style>
 
+
 {% endblock %}
+

@@ -11,20 +11,54 @@
 <body>
 <!-- Image and text -->
 <nav class="navbar navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">
+  <a class="navbar-brand" href="{% url 'movieapp:index'%}">
       Online Movie Store
   </a>
-    <div class="card-footer align-self-end">
-        {% if user.is_authenticated %}
-            <span class="text-white">Welcome, {{ user.username }}</span>
-            <a href="{% url 'movieapp:user_logout' %}" class="btn btn-info ml-2">Logout</a>
-        {% else %}
-            <a href="{% url 'movieapp:user_login' %}?next={{ request.path }}" class="btn btn-info">Login</a>
-            <a href="{% url 'movieapp:user_register' %}" class="btn btn-info">Signup</a>
-         {% endif %}
-    </div>
+  <!-- Inside the navigation bar -->
+<div class="card-footer align-self-end nav-footer">
+    {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'movieapp:dashboard' user.username %}">{{ user.username }}</a>
+        <a href="{% url 'movieapp:user_logout' %}" class="btn btn-info">Logout</a>
+    {% else %}
+        <a href="{% url 'movieapp:user_login' %}?next={{ request.path }}" class="btn btn-info" style="margin: 5px;">Login</a>
+        <a href="{% url 'movieapp:user_register' %}" class="btn btn-info">Signup</a>
+    {% endif %}
+</div>
+
+
 </nav>
 {% block body %}
 {% endblock %}
 </body>
 </html>
+
+<style>
+/* Inside your CSS file or <style> tags */
+.nav-footer {
+    display: flex; /* Use flexbox layout */
+    align-items: center; /* Align items vertically */
+}
+
+.nav-link {
+    color: #007bff; /* Highlight the username with a different text color */
+    font-weight: bold; /* Optionally make the username bold */
+    text-decoration: none; /* Remove underline from the link */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* Add hover effect */
+.nav-link:hover {
+    color: #0056b3; /* Darken the color on hover */
+}
+
+/* Adjust spacing */
+.nav-link {
+    margin-right: 10px; /* Add margin to create space between the username and signout button */
+}
+
+body {
+    background: aqua;
+    margin-top: 0px;
+}
+
+</style>

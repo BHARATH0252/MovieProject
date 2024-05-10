@@ -10,6 +10,66 @@
   .card-body {
     flex-grow: 1;
   }
+    body{
+
+	background-color: #eee;
+}
+
+.card{
+
+	background-color: #fff;
+	border: none;
+}
+
+.form-color{
+
+   background-color: #fafafa;
+
+}
+
+.form-control{
+
+	height: 48px;
+	border-radius: 25px;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #35b69f;
+    outline: 0;
+    box-shadow: none;
+    text-indent: 10px;
+}
+
+.c-badge{
+	background-color: #35b69f;
+    color: white;
+    height: 20px;
+    font-size: 11px;
+    width: 92px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.comment-text{
+	font-size: 13px;
+}
+
+.wish{
+
+	color:#35b69f;
+}
+
+
+.user-feed{
+
+	    font-size: 14px;
+	    margin-top: 12px;
+}
 </style>
     <h1>{{ movie.title }}</h1>
     <img src="{{ movie.poster.url }}" alt="{{ movie.title }} Poster" height="300px" width="250px">
@@ -20,7 +80,7 @@
     <p>Category: {{ movie.category }}</p>
     <a href="{{ movie.trailer_link }}" target="_blank">Watch Trailer on YouTube</a>
 
-   <div class="reviews-box">
+    <div class="reviews-box">
         <h2>Reviews</h2>
         <ul>
             {% for review in movie.review_set.all %}
@@ -32,6 +92,67 @@
             {% endfor %}
         </ul>
     </div>
+    <!-- movie user review -->
+
+<!--    <div class="container mt-5 mb-5">-->
+
+<!--            <div class="row height d-flex justify-content-center align-items-center">-->
+
+<!--              <div class="col-md-7">-->
+
+<!--                <div class="card">-->
+
+<!--                  <div class="p-3">-->
+
+<!--                    <h6>Comments</h6>-->
+
+<!--                  </div>-->
+
+<!--                  <div class="mt-3 d-flex flex-row align-items-center p-3 form-color">-->
+
+<!--                    <img src="https://i.imgur.com/zQZSWrt.jpg" width="50" class="rounded-circle mr-2">-->
+<!--                    <input type="text" class="form-control" placeholder="Enter your comment...">-->
+
+<!--                  </div>-->
+
+
+<!--                  <div class="mt-2">-->
+
+<!--                    <div class="d-flex flex-row p-3">-->
+
+<!--                      <img src="https://i.imgur.com/zQZSWrt.jpg" width="40" height="40" class="rounded-circle mr-3">-->
+
+<!--                      <div class="w-100">-->
+
+<!--                        <div class="d-flex justify-content-between align-items-center">-->
+<!--                            <div class="d-flex flex-row align-items-center">-->
+<!--                              <span class="mr-2">{{ review.user.username }}</span>-->
+<!--                              <small class="c-badge">Top Comment</small>-->
+<!--                            </div>-->
+<!--                            <small>12h ago</small>-->
+<!--                      </div>-->
+
+<!--                      <p class="text-justify comment-text mb-0"></p>-->
+
+<!--                      <div class="d-flex flex-row user-feed">-->
+
+<!--                        <span class="wish"><i class="fa fa-heartbeat mr-2"></i>24</span>-->
+<!--                        <span class="ml-3"><i class="fa fa-comments-o mr-2"></i>Reply</span>-->
+
+
+<!--                      </div>-->
+
+<!--                    </div>-->
+
+
+<!--                  </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--    </div>-->
+
+
      {% if user.is_authenticated %}
         <a href="{% url 'movieapp:add_review' movie.id %}">Add Review</a>
     {% endif %}

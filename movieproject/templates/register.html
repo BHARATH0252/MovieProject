@@ -1,16 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-</head>
-<body>
-    <h1>User Registration</h1>
-    <form method="post">
+{%  extends 'base.html' %}
+{% block body %}
+    
+    <form method="post" class="login-form">
+        <h1>User Registration</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Register</button>
     </form>
-</body>
-</html>
+
+<script>
+        // Function to display the pop-up message
+        function displayAccountCreatedMessage() {
+            var message = "Account Created Successfully!\n\n";
+            message += "Thank you for registering.";
+            alert(message);
+        }
+
+        // Add event listener to the form submission
+        document.getElementById("registration-form").addEventListener("submit", function(event) {
+            // Display the pop-up message
+            displayAccountCreatedMessage();
+        });
+    </script>
+
+{% endblock %}
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
