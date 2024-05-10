@@ -1,5 +1,5 @@
 from django import forms
-from .models import Movie, Review,Category,Profile
+from .models import Movie, Review,Category,UserUpdateForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 class MovieForm(forms.ModelForm):
@@ -40,11 +40,6 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
-
-# class ProfileForm(forms.ModelForm):
-#     class Meta:
-#         model = Profile
-#         fields = ['bio']  # Add more fields as needed
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

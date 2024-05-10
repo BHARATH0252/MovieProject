@@ -176,26 +176,23 @@ def viewprofile(request, username):
     return render(request, 'profile.html', {'user': user, 'profile': profile})
 
 
-@login_required
-def update_profile(request):
-  if request.method == 'POST':
-    user_form = UserUpdateForm(request.POST, instance=request.user)
-    if user_form.is_valid():
-      user_form.save()
+def update_profile(request, username):
+    # Retrieve the user object
+    user = get_object_or_404(User, username=username)
 
-      # Update session data after successful update (optional)
-      update_session_auth_hash(request.user, user_form.saved_object)
-
-      return redirect('edit_profile.html')  # Redirect to profile page after successful update
+    if request.method == 'POST':
+        # Populate the form with the POST data and instance of the user
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()  # Save the form data to update the user's profile
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('movieapp:viewprofile',username=username)  # Redirect to the profile page
     else:
-      # Handle form validation errors (optional)
-      pass
-  else:
-    user_form = UserUpdateForm(instance=request.user)
-
-  context = {'user_form': user_form}
-  return render(request, 'edit_profile.html', {'user_form': user_form})
-
+        # Populate the form with the current user's information
+        form = UserUpdateForm(instance=user)
+    context = {'form': form}
+    # Render the template with the form
+    return render(request, 'update_profile.html', context)
 
 def delete_movie(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)

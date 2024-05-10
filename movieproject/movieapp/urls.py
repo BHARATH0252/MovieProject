@@ -17,5 +17,5 @@ urlpatterns = [
     path('search/', views.movie_search, name='movie_search'),
     path('movie/edit/<int:movie_id>/', views.edit_movie, name='edit_movie'),
     path('delete/<int:movie_id>/', views.delete_movie, name='delete_movie'),
-    path('update-profile/', views.update_profile, name='update_profile'), 
+    path('update-profile/<str:username>/', views.update_profile, name='update_profile'), 
 ]
