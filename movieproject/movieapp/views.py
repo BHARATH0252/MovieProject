@@ -99,7 +99,7 @@ def edit_movie(request, movie_id):
         form = MovieForm(request.POST, request.FILES, instance=movie)
         if form.is_valid():
             form.save()
-            return redirect('movieapp:view_profile')
+            return redirect(reverse('movieapp:dashboard', kwargs={'username': request.user.username}))
     else:
         form = MovieForm(instance=movie)
     return render(request, 'movies/edit_movie.html', {'form': form})
