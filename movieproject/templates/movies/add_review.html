@@ -1,10 +1,82 @@
-
 {% extends 'base.html' %}
 {% block body %}
-    <h2>Add Review for {{ movie.title }}</h2>
+<style>
+    /* Form container */
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form header */
+    .form-header {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #333;
+        font-size: 24px;
+    }
+
+    /* Form fields */
+    .form-field {
+        margin-bottom: 15px;
+    }
+
+    /* Label */
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    /* Textarea */
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    /* Input for rating */
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    /* Button */
+    button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-header">Add Review</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-field">
+            <label for="id_text">Review Text:</label>
+            <textarea name="text" id="id_text" rows="4" required></textarea>
+        </div>
+        <div class="form-field">
+            <label for="id_rating">Rating (out of 10):</label>
+            <input type="number" name="rating" id="id_rating" min="1" max="10" required>
+        </div>
         <button type="submit">Submit Review</button>
     </form>
+</div>
 {% endblock %}

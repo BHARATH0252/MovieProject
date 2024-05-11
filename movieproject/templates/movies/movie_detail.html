@@ -1,161 +1,121 @@
-{%  extends 'base.html' %}
+{% extends 'base.html' %}
 {% block body %}
 <style>
-  .card-container {
-    margin: 10px;
-    min-height: 350px;
-     display: flex;
-    flex-direction: column;
-  }
-  .card-body {
-    flex-grow: 1;
-  }
-    body{
-
-	background-color: #eee;
+/* Updated styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0; /* Light background color */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
-.card{
-
-	background-color: #fff;
-	border: none;
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  display: flex; /* Use flexbox to arrange items */
+  justify-content: space-between; /* Space items evenly */
 }
 
-.form-color{
-
-   background-color: #fafafa;
-
+.movie-details {
+  background-color: #fff; /* Background color for details */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  border-radius: 10px; /* Add border radius for rounded corners */
+  padding: 20px;
+  margin-right: 20px; /* Add spacing between details and poster */
+  font-weight: bold; /* Make text bold */
+  font-size: 18px; /* Increase font size */
 }
 
-.form-control{
-
-	height: 48px;
-	border-radius: 25px;
+.movie-details h1 {
+  margin-top: 0;
+  color: #333; /* Darken heading color */
+  font-size: 24px; /* Increase font size for heading */
+  text-align: center;
 }
 
-.form-control:focus {
-    color: #495057;
-    background-color: #fff;
-    border-color: #35b69f;
-    outline: 0;
-    box-shadow: none;
-    text-indent: 10px;
+.movie-details p {
+  margin-bottom: 10px;
+  color: #666; /* Darken paragraph text color */
+  font-size: 16px; /* Increase font size for paragraphs */
 }
 
-.c-badge{
-	background-color: #35b69f;
-    color: white;
-    height: 20px;
-    font-size: 11px;
-    width: 92px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 2px;
+.movie-details a {
+  font-size: 16px; /* Increase font size for links */
 }
 
-.comment-text{
-	font-size: 13px;
+.movie-poster {
+  flex: 1; /* Take up available space */
 }
 
-.wish{
-
-	color:#35b69f;
+.movie-poster img {
+  width: 100%; /* Make sure the poster fills the container */
+  border-radius: 10px; /* Add border radius for rounded corners */
 }
 
-
-.user-feed{
-
-	    font-size: 14px;
-	    margin-top: 12px;
+.reviews-box {
+  flex: 1; /* Take up available space */
+  background-color: #fff; /* Background color for reviews */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  border-radius: 10px; /* Add border radius for rounded corners */
+  padding: 20px;
 }
+
+.reviews-box h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.review-list {
+  list-style: none;
+  padding: 0;
+}
+
+.review-item {
+  margin-bottom: 20px;
+}
+
+.review-item strong {
+  font-weight: bold;
+}
+
 </style>
-    <h1>{{ movie.title }}</h1>
-    <img src="{{ movie.poster.url }}" alt="{{ movie.title }} Poster" height="300px" width="250px">
 
+<div class="container">
+  <div class="movie-details">
+    <h1>{{ movie.title }}</h1>
     <p>Description: {{ movie.description }}</p>
     <p>Release Date: {{ movie.release_date }}</p>
     <p>Actors: {{ movie.actors }}</p>
     <p>Category: {{ movie.category }}</p>
     <a href="{{ movie.trailer_link }}" target="_blank">Watch Trailer on YouTube</a>
-
-    <div class="reviews-box">
-        <h2>Reviews</h2>
-        <ul>
-            {% for review in movie.review_set.all %}
-                <li>
-                    <strong>@{{ review.user.username }}:</strong> {{ review.text }}
-                </li>
-            {% empty %}
-                <li>No reviews yet.</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <!-- movie user review -->
-
-<!--    <div class="container mt-5 mb-5">-->
-
-<!--            <div class="row height d-flex justify-content-center align-items-center">-->
-
-<!--              <div class="col-md-7">-->
-
-<!--                <div class="card">-->
-
-<!--                  <div class="p-3">-->
-
-<!--                    <h6>Comments</h6>-->
-
-<!--                  </div>-->
-
-<!--                  <div class="mt-3 d-flex flex-row align-items-center p-3 form-color">-->
-
-<!--                    <img src="https://i.imgur.com/zQZSWrt.jpg" width="50" class="rounded-circle mr-2">-->
-<!--                    <input type="text" class="form-control" placeholder="Enter your comment...">-->
-
-<!--                  </div>-->
-
-
-<!--                  <div class="mt-2">-->
-
-<!--                    <div class="d-flex flex-row p-3">-->
-
-<!--                      <img src="https://i.imgur.com/zQZSWrt.jpg" width="40" height="40" class="rounded-circle mr-3">-->
-
-<!--                      <div class="w-100">-->
-
-<!--                        <div class="d-flex justify-content-between align-items-center">-->
-<!--                            <div class="d-flex flex-row align-items-center">-->
-<!--                              <span class="mr-2">{{ review.user.username }}</span>-->
-<!--                              <small class="c-badge">Top Comment</small>-->
-<!--                            </div>-->
-<!--                            <small>12h ago</small>-->
-<!--                      </div>-->
-
-<!--                      <p class="text-justify comment-text mb-0"></p>-->
-
-<!--                      <div class="d-flex flex-row user-feed">-->
-
-<!--                        <span class="wish"><i class="fa fa-heartbeat mr-2"></i>24</span>-->
-<!--                        <span class="ml-3"><i class="fa fa-comments-o mr-2"></i>Reply</span>-->
-
-
-<!--                      </div>-->
-
-<!--                    </div>-->
-
-
-<!--                  </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--    </div>-->
-
-
-     {% if user.is_authenticated %}
-        <a href="{% url 'movieapp:add_review' movie.id %}">Add Review</a>
+    {% if average_rating %}
+      <p>Rating: {{ average_rating }}</p>
     {% endif %}
+  </div>
 
+  <div class="movie-poster">
+    <img src="{{ movie.poster.url }}" alt="{{ movie.title }} Poster" height="300px" width="250px">
+  </div>
+</div>
+
+<div class="container">
+  <div class="reviews-box">
+    <h2>Reviews</h2>
+    <ul class="review-list">
+        {% for review in movie.review_set.all %}
+            <li class="review-item">
+                <strong>@{{ review.user.username }}:</strong> {{ review.text }}
+            </li>
+        {% empty %}
+            <li class="review-item">No reviews yet.</li>
+        {% endfor %}
+    </ul>
+  </div>
+</div>
+<div class="container" style="align-items: self-end;">
+  {% if user.is_authenticated %}
+  <a href="{% url 'movieapp:add_review' movie.id %}">Add Review</a>
+{% endif %}
+</div>
 
 {% endblock %}

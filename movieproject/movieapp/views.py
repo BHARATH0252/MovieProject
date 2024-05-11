@@ -12,25 +12,24 @@ from django.db.models.signals import post_save
 
 def index(request):
     categories_with_movies = Category.objects.order_by('name').values('id', 'name')
-
-    # Create a dictionary to map category IDs to category names
     category_id_to_name = {category['id']: category['name'] for category in categories_with_movies}
-
-    # Now populate movies_by_category using category names
     movies_by_category = {}
     for category_id, category_name in category_id_to_name.items():
         movies = Movie.objects.filter(category=category_id)
         movies_by_category[category_name] = movies
-
-    #print("Movies by category:", movies_by_category)  # Debugging statement
-
     return render(request, 'index.html', {'movies_by_category': movies_by_category})
 
-
+# Movie functions
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     reviews = Review.objects.filter(movie=movie)
-    return render(request, 'movies/movie_detail.html', {'movie': movie, 'reviews': reviews})
+    if reviews.exists():
+        average_rating = sum(review.rating for review in reviews) / len(reviews)
+    else:
+        average_rating = None
+
+    context = {'movie': movie, 'reviews': reviews, 'average_rating': average_rating}
+    return render(request, 'movies/movie_detail.html', context)
 
 
 def movie_list_view(request):
@@ -56,30 +55,65 @@ def add_movie(request):
         form = MovieForm()
     return render(request, 'movies/add_movie.html', {'form': form})
 
-
 @login_required
 def add_review(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
-            if request.user.is_authenticated:  # Ensure user is authenticated
+            if request.user.is_authenticated:
                 review = form.save(commit=False)
                 review.movie = movie
                 review.user = request.user
                 review.save()
                 messages.success(request, 'Review added successfully!')
-                return redirect('movie_detail', movie_id=movie_id)
+                return redirect('movieapp:movie_detail', movie_id=movie_id)
             else:
                 messages.error(request, 'You need to be logged in to add a review.')
         else:
             messages.error(request, 'Form validation failed.')
     else:
         form = ReviewForm()
-
     return render(request, 'movies/add_review.html', {'form': form, 'movie': movie})
 
+def movie_search(request):
+    if request.method == 'GET':
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data.get('query')
+            category = form.cleaned_data.get('category')
+            movies = Movie.objects.all()
+            if query:
+                movies = movies.filter(title__icontains=query)
+            if category:
+                movies = movies.filter(category=category)
+            return render(request, 'search_results.html', {'movies': movies})
+    else:
+        form = SearchForm()
+    return render(request, 'search_results.html', {'form': form})
 
+
+def edit_movie(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    if request.method == 'POST':
+        form = MovieForm(request.POST, request.FILES, instance=movie)
+        if form.is_valid():
+            form.save()
+            return redirect('movieapp:view_profile')
+    else:
+        form = MovieForm(instance=movie)
+    return render(request, 'movies/edit_movie.html', {'form': form})
+
+def delete_movie(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    if movie.added_by == request.user:
+        movie.delete()
+        messages.success(request, 'Movie deleted successfully.')
+    else:
+        messages.error(request, 'You do not have permission to delete this movie.')
+    return redirect(reverse('movieapp:dashboard', kwargs={'username': request.user.username}))
+
+#User Functions
 def user_register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -129,80 +163,30 @@ def dashboard(request, username):
 
 @login_required
 def view_profile(request):
-    # Logic to fetch and display user profile information
     return render(request, 'profile.html')
-
-
-def movie_search(request):
-    if request.method == 'GET':
-        form = SearchForm(request.GET)
-        if form.is_valid():
-            query = form.cleaned_data.get('query')
-            category = form.cleaned_data.get('category')
-            movies = Movie.objects.all()
-            if query:
-                movies = movies.filter(title__icontains=query)
-            if category:
-                movies = movies.filter(category=category)
-            return render(request, 'search_results.html', {'movies': movies})
-    else:
-        form = SearchForm()
-    return render(request, 'search_results.html', {'form': form})
-
-
-def edit_movie(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
-    if request.method == 'POST':
-        form = MovieForm(request.POST, request.FILES, instance=movie)
-        if form.is_valid():
-            form.save()
-            return redirect('movieapp:view_profile')
-    else:
-        form = MovieForm(instance=movie)
-    return render(request, 'movies/edit_movie.html', {'form': form})
-
 
 def viewprofile(request, username):
     # Retrieve the user object
     user = get_object_or_404(User, username=username)
-
     try:
-        # Attempt to retrieve the profile associated with the user
         profile = Profile.objects.get(user=user)
     except Profile.DoesNotExist:
-        # Handle case where the profile doesn't exist
         profile = None
-
     return render(request, 'profile.html', {'user': user, 'profile': profile})
 
 
 def update_profile(request, username):
-    # Retrieve the user object
     user = get_object_or_404(User, username=username)
-
     if request.method == 'POST':
-        # Populate the form with the POST data and instance of the user
         form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()  # Save the form data to update the user's profile
+            form.save()  
             messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('movieapp:viewprofile',username=username)  # Redirect to the profile page
+            return redirect('movieapp:viewprofile',username=username)  
     else:
-        # Populate the form with the current user's information
         form = UserUpdateForm(instance=user)
     context = {'form': form}
-    # Render the template with the form
     return render(request, 'update_profile.html', context)
-
-def delete_movie(request, movie_id):
-    movie = get_object_or_404(Movie, id=movie_id)
-    if movie.added_by == request.user:
-        movie.delete()
-        messages.success(request, 'Movie deleted successfully.')
-    else:
-        # Add an error message if the user does not have permission
-        messages.error(request, 'You do not have permission to delete this movie.')
-    return redirect(reverse('movieapp:dashboard', kwargs={'username': request.user.username}))
 
 
 @receiver(post_save, sender=User)
