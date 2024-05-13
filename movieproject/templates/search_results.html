@@ -1,23 +1,36 @@
 {%  extends 'base.html' %}
 {% block body %}
+<style>
+    .movie-listings {
+        margin-top: 20px; /* Adjust margin-top to create space between search form and movie listings */
+    }
+    .card-container {
+        margin: 10px;
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+    }
 
+    .card-body {
+        flex-grow: 1;
+    }
+</style>
 {% if movies %}
 <div class="container movie-listings">
     <div class="row">
         {% for movie in movies %}
-            <div class="col-md-3 card-container">
-                <div class="card h-100" style="width: 18rem;">
-                    <a href="{% url 'movieapp:movie_detail' movie.id %}">
-                        <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.name }}" height="200px" width="150px">
-                    </a>   
-                    <div class="card-body">
-                        <h5 class="card-title">{{ movie.title }}</h5>
-                        <h6>{{ movie.category }}</h6>
-                        <h6 style="font-size: 80%"><p class="card-text">{{ movie.description |truncatechars:50}}</p></h6>
-                    </div>
-
+        <div class="col-md-3 card-container" >
+            <div class="card h-100" style="width: 18rem;">
+                 <a href="{% url 'movieapp:movie_detail' movie.id %}">
+                <img src="{{ movie.poster.url }}" class="card-img-top" alt="{{ movie.name }}" height="200px" width="150px">
+                 </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <h6>{{ movie.category }}</h6>
+                    <h6 style="font-size: 80%"><p class="card-text">{{ movie.description |truncatechars:50 }}</p></h6>
                 </div>
             </div>
+        </div>
         {% endfor %}
     </div>
  <div class="mt-3">
