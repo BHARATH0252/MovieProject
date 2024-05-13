@@ -13,11 +13,16 @@ from django.db.models.signals import post_save
 def index(request):
     categories_with_movies = Category.objects.order_by('name').values('id', 'name')
     category_id_to_name = {category['id']: category['name'] for category in categories_with_movies}
+    categories = Category.objects.order_by('name')
     movies_by_category = {}
     for category_id, category_name in category_id_to_name.items():
         movies = Movie.objects.filter(category=category_id)
         movies_by_category[category_name] = movies
-    return render(request, 'index.html', {'movies_by_category': movies_by_category})
+    context = {
+      'movies_by_category': movies_by_category,
+      'categories': categories,  # Add the retrieved categories to the context
+    }
+    return render(request, 'index.html', context)
 
 # Movie functions
 def movie_detail(request, movie_id):
