@@ -120,11 +120,11 @@ body {
       {% for review in movie.review_set.all %}
       <li class="review-item" data-review-id="{{ review.id }}"> <strong>@{{ review.user.username }}:</strong>
 
-        {{ review.text | truncatechars:20 }}
+        {{ review.text }}
     
-        {% if review.text|length > 20 %}
+        <!-- {% if review.text|length > 20 %}
           <a href="#" class="see-more" data-review-id="{{ review.id }}">See more</a>
-        {% endif %}
+        {% endif %} -->
       </li>
       {% empty %}
         <li class="review-item">No reviews yet.</li>
