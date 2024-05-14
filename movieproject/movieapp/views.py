@@ -45,6 +45,17 @@ def movie_list_view(request):
         movies_by_genre[genre] = movies
     return render(request, 'index.html', {'movies_by_genre': movies_by_genre})
 
+def movies_by_category(request, category_id=None):
+    movies = Movie.objects.filter(category=category_id)
+    category = get_object_or_404(Category, pk=category_id)  # Fetch category object
+    context = {'movies': movies, 'category': category}
+    return render(request, 'movies/movie_list.html', context)
+
+def movie_all(request):
+  movies = Movie.objects.all()  # Fetch all movies
+  context = {'movies': movies}
+  return render(request, 'index.html', context)
+
 
 @login_required
 def add_movie(request):

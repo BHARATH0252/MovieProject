@@ -27,8 +27,11 @@
 
 
 </nav>
-{% block body %}
-{% endblock %}
+    <div class="container">
+        {% block body %}
+        {%  include 'header.html' %}
+        {% endblock %}
+    </div>
 </body>
 </html>
 
