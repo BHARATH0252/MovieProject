@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Movie, Review, Category, Profile ,User
 from movieapp.forms import MovieForm, ReviewForm, SearchForm
-from .forms import UserRegistrationForm, UserForm  ,UserUpdateForm
+from .forms import UserRegistrationForm, UserForm ,UserUpdateForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout,update_session_auth_hash
 from django.urls import reverse

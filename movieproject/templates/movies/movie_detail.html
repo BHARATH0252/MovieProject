@@ -82,6 +82,17 @@ body {
   font-weight: bold;
 }
 
+.add-review {
+  background-color: #EFC050; /* Green color */
+  color: white;
+  padding: 10px 20px; /* Adjust padding as needed */
+  margin: 10px; /* Adjust margin as needed */
+  border: 1px solid #ddd;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none; /* Remove underline from link */
+}
+
 </style>
 
 <div class="container">
@@ -105,21 +116,29 @@ body {
 <div class="container">
   <div class="reviews-box">
     <h2>Reviews</h2>
-    <ul class="review-list">
-        {% for review in movie.review_set.all %}
-            <li class="review-item">
-                <strong>@{{ review.user.username }}:</strong> {{ review.text }}
-            </li>
-        {% empty %}
-            <li class="review-item">No reviews yet.</li>
-        {% endfor %}
+    <ul class="review-list" style="max-height: 100px; overflow-y: scroll;">
+      {% for review in movie.review_set.all %}
+      <li class="review-item" data-review-id="{{ review.id }}"> <strong>@{{ review.user.username }}:</strong>
+
+        {{ review.text | truncatechars:20 }}
+    
+        {% if review.text|length > 20 %}
+          <a href="#" class="see-more" data-review-id="{{ review.id }}">See more</a>
+        {% endif %}
+      </li>
+      {% empty %}
+        <li class="review-item">No reviews yet.</li>
+      {% endfor %}
     </ul>
   </div>
 </div>
+
 <div class="container" style="align-items: self-end;">
   {% if user.is_authenticated %}
-  <a href="{% url 'movieapp:add_review' movie.id %}">Add Review</a>
-{% endif %}
+    <a href="{% url 'movieapp:add_review' movie.id %}" class="add-review">Add Review</a>
+  {% endif %}
 </div>
+
+
 
 {% endblock %}
